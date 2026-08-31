@@ -289,3 +289,56 @@ function wireVideoPlayback(video) {
     resizeTimer = setTimeout(applyOffsets, 16);
   });
 })();
+
+// ── PAGE REVEAL ──
+// By this point shuffle order and spatial-drift positions have already
+// been applied (both ran synchronously above) — but they, and any images
+// still loading, are hidden behind the white cover. Wait for whatever's
+// currently in the viewport to finish loading, then fade the cover away
+// once, so the visitor sees the finished layout appear in a single
+// deliberate motion rather than watching it assemble itself.
+(function() {
+  var reveal = document.getElementById('pageReveal');
+  if (!reveal) return;
+
+  function hideReveal() {
+    requestAnimationFrame(function() {
+      requestAnimationFrame(function() {
+        reveal.classList.add('is-hidden');
+      });
+    });
+  }
+
+  var visible = [];
+  document.querySelectorAll('.primary img, .primary video').forEach(function(el) {
+    var rect = el.getBoundingClientRect();
+    if (rect.top < window.innerHeight && rect.bottom > 0) {
+      visible.push(el);
+    }
+  });
+
+  var pending = visible.filter(function(el) {
+    return el.tagName === 'IMG' ? !el.complete : el.readyState < 2;
+  });
+
+  if (pending.length === 0) {
+    hideReveal();
+    return;
+  }
+
+  var remaining = pending.length;
+  function done() {
+    remaining--;
+    if (remaining <= 0) hideReveal();
+  }
+
+  pending.forEach(function(el) {
+    var loadEvent = el.tagName === 'IMG' ? 'load' : 'loadeddata';
+    el.addEventListener(loadEvent, done, { once: true });
+    el.addEventListener('error', done, { once: true });
+  });
+
+  // Safety net — never leave a visitor staring at a blank white page if a
+  // file is slow or fails to load.
+  setTimeout(hideReveal, 3000);
+})();
