@@ -6,6 +6,7 @@ module.exports = function (eleventyConfig) {
   eleventyConfig.addPassthroughCopy("src/js");
   eleventyConfig.addPassthroughCopy("src/uploads");
   eleventyConfig.addPassthroughCopy("src/admin");
+  eleventyConfig.addPassthroughCopy("src/favicon.svg");
 
   eleventyConfig.addCollection("posts", function (collectionApi) {
     return collectionApi.getFilteredByGlob("src/posts/*.md").sort((a, b) => {
