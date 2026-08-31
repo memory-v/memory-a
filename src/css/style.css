@@ -89,6 +89,8 @@ body {
   height: auto !important;
   max-height: var(--portrait-max-height) !important;
   margin: 0 auto !important;
+  -webkit-user-drag: none;
+  user-select: none;
 }
 
 .primary video,

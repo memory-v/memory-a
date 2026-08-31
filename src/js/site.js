@@ -1,3 +1,13 @@
+// ── DISABLE RIGHT-CLICK MENU ON MEDIA ──
+// Discourages "Open image in new tab" / "Save image as" from the casual
+// right-click menu. Not a real barrier — browsers always let a determined
+// visitor inspect or save media — just removes the obvious shortcut.
+document.addEventListener('contextmenu', function(e) {
+  if (e.target.closest('.primary')) {
+    e.preventDefault();
+  }
+});
+
 // ── AGE SIGNAL ──
 // Calculates days since post date and injects into .age-signal
 function formatAgeSignal(dateStr) {
