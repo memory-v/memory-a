@@ -11,11 +11,13 @@
 
   <div class="primary">
     {% if type == "video" %}
-      <video muted playsinline preload="none" poster="{{ poster }}">
+      {% set posterDims = poster | imageDimensions %}
+      <video muted playsinline preload="none" poster="{{ poster }}" width="{{ posterDims.width }}" height="{{ posterDims.height }}">
         <source src="{{ video }}" type="video/mp4">
       </video>
     {% else %}
-      <img src="{{ image }}" alt="" loading="lazy">
+      {% set dims = image | imageDimensions %}
+      <img src="{{ image }}" alt="" loading="lazy" width="{{ dims.width }}" height="{{ dims.height }}">
     {% endif %}
   </div>
 
