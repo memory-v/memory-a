@@ -339,6 +339,13 @@ body {
   cursor: pointer;
 }
 
+.void-trigger {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 60;
+}
+
 /* ── PERMALINK HEADER ROW (single-post pages) ── */
 .post-header-row {
   display: flex;
