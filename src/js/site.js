@@ -39,28 +39,20 @@ function applyAgeSignal(post) {
   });
 })();
 
-// ── SQUARE IMAGE CAP ──
-// A near-square image sits right at the height cap while also filling the
-// full post width, so it fills the maximum space in both directions at
-// once and reads as oversized next to true portraits/landscapes. Give
-// near-square images (aspect ratio ~0.85–1.15) a tighter height cap.
-function capSquareImage(img) {
-  function apply() {
-    if (!img.naturalWidth || !img.naturalHeight) return;
-    var ratio = img.naturalWidth / img.naturalHeight;
-    if (ratio >= 0.85 && ratio <= 1.15) {
-      img.style.maxHeight = '560px';
-    }
-  }
-  if (img.complete) {
-    apply();
-  } else {
-    img.addEventListener('load', apply, { once: true });
-  }
-}
-
+// ── IMAGE FADE-IN ──
+// Images use the browser's native loading="lazy", which defers the actual
+// download until the image nears the viewport. Fade each one in once it
+// has actually loaded, rather than letting it pop in abruptly.
 (function() {
-  document.querySelectorAll('.primary img').forEach(capSquareImage);
+  document.querySelectorAll('.primary img').forEach(function(img) {
+    if (img.complete && img.naturalWidth) {
+      img.classList.add('is-loaded');
+    } else {
+      img.addEventListener('load', function() {
+        img.classList.add('is-loaded');
+      }, { once: true });
+    }
+  });
 })();
 
 // ── IMAGE-WIDTH ALIGNMENT ──
@@ -121,14 +113,18 @@ function alignPostToImage(post) {
 })();
 
 // ── VIDEO PLAYBACK ──
-// Force explicit play() and hide native controls until hover, so autoplaying
-// muted videos don't show a stuck idle-state overlay on load.
+// Videos are marked preload="none" in the markup, so nothing downloads
+// until this actually starts it — only once the video is near the
+// viewport, via the IntersectionObserver below. Force explicit play() and
+// hide native controls until hover, so autoplaying muted videos don't show
+// a stuck idle-state overlay on load.
 function wireVideoPlayback(video) {
   if (video._playbackWired) return;
   video._playbackWired = true;
   video.removeAttribute('controls');
   video.loop = true;
   video.play().catch(function() {});
+  video.classList.add('is-loaded');
   video.addEventListener('mouseenter', function() {
     video.setAttribute('controls', 'controls');
   });
@@ -138,45 +134,26 @@ function wireVideoPlayback(video) {
 }
 
 (function() {
-  document.querySelectorAll('.primary video').forEach(wireVideoPlayback);
-})();
+  var videos = document.querySelectorAll('.primary video');
+  if (!videos.length) return;
 
-// ── VOID ──
-(function() {
-  var overlay = document.getElementById('voidOverlay');
-  if (!overlay) return;
+  if (!('IntersectionObserver' in window)) {
+    // No observer support — fall back to loading everything up front.
+    videos.forEach(wireVideoPlayback);
+    return;
+  }
 
-  var scrollLock = function(e) { e.preventDefault(); e.stopPropagation(); return false; };
-
-  function openVoid() {
-    overlay.style.opacity = '0';
-    overlay.style.display = 'flex';
-    requestAnimationFrame(function() {
-      requestAnimationFrame(function() {
-        overlay.style.opacity = '1';
-        window.addEventListener('wheel', scrollLock, { passive: false });
-        window.addEventListener('touchmove', scrollLock, { passive: false });
-      });
+  var observer = new IntersectionObserver(function(entries) {
+    entries.forEach(function(entry) {
+      if (entry.isIntersecting) {
+        wireVideoPlayback(entry.target);
+        observer.unobserve(entry.target);
+      }
     });
-  }
+  }, { rootMargin: '400px 0px' }); // start loading a bit before it's on screen
 
-  function closeVoid() {
-    overlay.style.opacity = '0';
-    window.removeEventListener('wheel', scrollLock);
-    window.removeEventListener('touchmove', scrollLock);
-    setTimeout(function() {
-      overlay.style.display = 'none';
-    }, 1600);
-  }
-
-  document.querySelectorAll('.ctrl-void').forEach(function(btn) {
-    btn.addEventListener('click', openVoid);
-  });
-
-  overlay.addEventListener('click', closeVoid);
-
-  document.addEventListener('keydown', function(e) {
-    if (e.key === 'Escape' && overlay.style.display === 'flex') closeVoid();
+  videos.forEach(function(video) {
+    observer.observe(video);
   });
 })();
 

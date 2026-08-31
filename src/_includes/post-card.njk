@@ -11,11 +11,11 @@
 
   <div class="primary">
     {% if type == "video" %}
-      <video autoplay muted playsinline poster="{{ poster }}">
+      <video muted playsinline preload="none" poster="{{ poster }}">
         <source src="{{ video }}" type="video/mp4">
       </video>
     {% else %}
-      <img src="{{ image }}" alt="">
+      <img src="{{ image }}" alt="" loading="lazy">
     {% endif %}
   </div>
 

@@ -78,25 +78,40 @@ body {
 
 .post img,
 .post a img,
-.post a:not(.ctrl-void) {
+.post a {
   cursor: default !important;
 }
 
 .primary img {
   display: block !important;
   width: auto !important;
-  max-width: 100% !important;
+  max-width: min(100%, var(--portrait-max-height)) !important;
   height: auto !important;
   max-height: var(--portrait-max-height) !important;
   margin: 0 auto !important;
   -webkit-user-drag: none;
   user-select: none;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+
+.primary img.is-loaded {
+  opacity: 1;
 }
 
 .primary video,
 .primary iframe {
   display: block;
   max-width: 100%;
+}
+
+.primary video {
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+
+.primary video.is-loaded {
+  opacity: 1;
 }
 
 /* ── CAPTION ── */
@@ -118,27 +133,6 @@ body {
   }
 }
 
-.ctrl-void {
-  cursor: pointer;
-  font-family: var(--sys);
-  font-size: var(--sys-size);
-  font-weight: var(--sys-weight);
-  letter-spacing: var(--sys-spacing);
-  color: var(--muted);
-  text-decoration: none;
-  background: none;
-  border: none;
-  padding: 0;
-  text-transform: lowercase;
-  transition: color 0.2s ease;
-  line-height: 1;
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-}
-
-.ctrl-void:hover { color: var(--black); }
-
 /* ── MEMORY HOLES ── */
 .memory-hole {
   position: fixed;
@@ -153,28 +147,6 @@ body {
 
 .memory-hole.is-visible {
   opacity: 1;
-}
-
-/* ── VOID ── */
-.void-overlay {
-  display: none;
-  position: fixed;
-  inset: 0;
-  background: var(--white);
-  z-index: 900;
-  opacity: 0;
-  transition: opacity 1.6s ease;
-  align-items: center;
-  justify-content: center;
-  gap: 20px;
-  cursor: pointer;
-}
-
-.void-trigger {
-  position: fixed;
-  top: 24px;
-  left: 24px;
-  z-index: 60;
 }
 
 /* ── PERMALINK HEADER ROW (single-post pages) ── */
