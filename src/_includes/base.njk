@@ -49,5 +49,21 @@
 <div class="void-overlay" id="voidOverlay"></div>
 
 <script src="/js/site.js"></script>
+
+<!-- Catches invite/recovery links from Netlify Identity emails (which land
+     on the homepage) and opens the set-password widget, then sends you on
+     to the posting form. -->
+<script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+<script>
+if (window.netlifyIdentity) {
+  window.netlifyIdentity.on("init", function(user) {
+    if (!user) {
+      window.netlifyIdentity.on("login", function() {
+        document.location.href = "/admin/";
+      });
+    }
+  });
+}
+</script>
 </body>
 </html>
