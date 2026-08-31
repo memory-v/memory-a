@@ -200,14 +200,14 @@ function initMemoryHoles() {
   // hole going untouched for an oddly long stretch by chance.
   function cycleForever(hole) {
     (function scheduleNext() {
-      var delay = 2500 + Math.random() * 3500; // every 2.5–6s
+      var delay = 6000 + Math.random() * 8000; // sit still for 6–14s
       setTimeout(function() {
         hole.classList.remove('is-visible');
         setTimeout(function() {
           randomize(hole);
           hole.classList.add('is-visible');
           scheduleNext();
-        }, 1200); // matches .memory-hole's opacity transition duration
+        }, 4000); // matches .memory-hole's opacity transition duration
       }, delay);
     })();
   }

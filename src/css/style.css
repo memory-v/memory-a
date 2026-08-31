@@ -142,7 +142,7 @@ body {
   -webkit-backdrop-filter: blur(8px);
   border-radius: 2px;
   opacity: 0;
-  transition: opacity 1.2s ease;
+  transition: opacity 4s ease-in-out;
 }
 
 .memory-hole.is-visible {
