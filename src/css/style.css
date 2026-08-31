@@ -172,8 +172,8 @@ body {
 
 .void-trigger {
   position: fixed;
-  bottom: 24px;
-  right: 24px;
+  top: 24px;
+  left: 24px;
   z-index: 60;
 }
 
