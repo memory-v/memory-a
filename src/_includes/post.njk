@@ -1,0 +1,7 @@
+---
+layout: base.njk
+---
+{% from "post-card.njk" import card %}
+<div class="archive permalink-view">
+  {{ card(page.fileSlug, date, type, image, video, poster, content, page.url, true) }}
+</div>

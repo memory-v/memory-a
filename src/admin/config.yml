@@ -1,0 +1,27 @@
+backend:
+  name: git-gateway
+  branch: main
+
+media_folder: "src/uploads"
+public_folder: "/uploads"
+
+publish_mode: simple
+
+collections:
+  - name: "posts"
+    label: "Memories"
+    folder: "src/posts"
+    create: true
+    slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
+    identifier_field: slug
+    fields:
+      - { label: "Date", name: "date", widget: "datetime", format: "YYYY-MM-DD", date_format: "YYYY-MM-DD", time_format: false }
+      - label: "Type"
+        name: "type"
+        widget: "select"
+        options: ["photo", "video"]
+        default: "photo"
+      - { label: "Photo", name: "image", widget: "image", required: false, hint: "For photo posts" }
+      - { label: "Video", name: "video", widget: "file", required: false, hint: "For video posts (.mp4)" }
+      - { label: "Video poster frame", name: "poster", widget: "image", required: false, hint: "Optional still shown before the video plays" }
+      - { label: "Caption", name: "body", widget: "markdown", required: false }

@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>memory-a</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,400;1,300;1,400&family=Inter:wght@200;300&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+{{ content | safe }}
+
+<!-- DRIFT MODAL -->
+<div class="drift-modal" id="driftModal">
+  <div class="drift-modal-inner">
+    <div class="drift-modal-header">
+      <span class="drift-modal-title">drift</span>
+      <button class="drift-modal-close" id="driftModalClose">close</button>
+    </div>
+    <select class="drift-prefix-select" id="driftPrefix">
+      <option value="" disabled selected>prefix</option>
+      <option value="ECHO//:">ECHO//:</option>
+      <option value="TRACE//:">TRACE//:</option>
+      <option value="SIGNAL//:">SIGNAL//:</option>
+      <option value="NODE//:">NODE//:</option>
+      <option value="LOG//:">LOG//:</option>
+      <option value="SYNC//:">SYNC//:</option>
+      <option value="CACHE//:">CACHE//:</option>
+      <option value="INDEX//:">INDEX//:</option>
+      <option value="STATE//:">STATE//:</option>
+      <option value="LAYER//:">LAYER//:</option>
+      <option value="INPUT//:">INPUT//:</option>
+      <option value="OUTPUT//:">OUTPUT//:</option>
+      <option value="PATH//:">PATH//:</option>
+      <option value="KEY//:">KEY//:</option>
+      <option value="RENDER//:">RENDER//:</option>
+    </select>
+    <textarea class="drift-text-input" id="driftText" placeholder=""></textarea>
+    <button class="drift-submit" id="driftSubmit">submit</button>
+    <div class="drift-feedback" id="driftFeedback"></div>
+  </div>
+</div>
+
+<!-- VOID OVERLAY -->
+<div class="void-overlay" id="voidOverlay"></div>
+
+<script src="/js/site.js"></script>
+</body>
+</html>

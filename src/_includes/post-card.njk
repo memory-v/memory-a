@@ -1,0 +1,36 @@
+{% macro card(id, date, type, image, video, poster, captionHtml, url, permalink) %}
+<article class="post" data-post-id="{{ id }}" data-post-date="{{ date }}">
+  {% if permalink %}
+  <div class="post-header-row">
+    <a class="archive-footer-link" href="/">access memory-a</a>
+    <div class="age-signal" data-post-date="{{ date }}">0000</div>
+  </div>
+  {% else %}
+  <div class="age-signal" data-post-date="{{ date }}">0000</div>
+  {% endif %}
+
+  <div class="primary">
+    {% if type == "video" %}
+      <video autoplay muted playsinline poster="{{ poster }}">
+        <source src="{{ video }}" type="video/mp4">
+      </video>
+    {% else %}
+      <img src="{{ image }}" alt="">
+    {% endif %}
+  </div>
+
+  {% if captionHtml %}
+  <div class="caption">{{ captionHtml | safe }}</div>
+  {% endif %}
+
+  <div class="drift-entries" data-artefact-id="{{ id }}"></div>
+
+  <div class="controls">
+    <button class="ctrl-drift" data-artefact-id="{{ id }}">drift</button>
+    <button class="ctrl-void">void</button>
+    {% if not permalink %}
+    <a href="{{ url }}" class="archive-footer-link">view</a>
+    {% endif %}
+  </div>
+</article>
+{% endmacro %}

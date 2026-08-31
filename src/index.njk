@@ -1,0 +1,9 @@
+---
+layout: base.njk
+---
+{% from "post-card.njk" import card %}
+<div class="archive">
+  {% for post in collections.posts %}
+    {{ card(post.fileSlug, post.data.date, post.data.type, post.data.image, post.data.video, post.data.poster, post.templateContent, post.url, false) }}
+  {% endfor %}
+</div>
