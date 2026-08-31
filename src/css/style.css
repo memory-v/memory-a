@@ -5,7 +5,6 @@
 :root {
   --sys:       "Inter", sans-serif;
   --narrative: "Fraunces", serif;
-  --drift:     "Geist Mono", monospace;
 
   --black:     #0d0d0d;
   --white:     #ffffff;
@@ -79,7 +78,7 @@ body {
 
 .post img,
 .post a img,
-.post a:not(.ctrl-drift):not(.ctrl-void) {
+.post a:not(.ctrl-void) {
   cursor: default !important;
 }
 
@@ -118,48 +117,6 @@ body {
   }
 }
 
-/* ── DRIFT ENTRIES ── */
-.drift-entries {
-  margin-top: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 7px;
-}
-.drift-entries:not(:empty) {
-  margin-top: 24px;
-}
-
-.drift-entry {
-  font-family: var(--drift);
-  font-size: 11px;
-  font-weight: 400;
-  line-height: 1.5;
-  letter-spacing: 0.02em;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.drift-prefix {
-  text-transform: uppercase;
-  margin-right: 6px;
-}
-
-/* ── INTERACTION ROW ── */
-.controls {
-  margin-top: 14px;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: 20px;
-  font-family: var(--sys);
-  font-size: var(--sys-size);
-  font-weight: var(--sys-weight);
-  letter-spacing: var(--sys-spacing);
-  color: var(--muted);
-}
-
-.ctrl-drift,
 .ctrl-void {
   cursor: pointer;
   font-family: var(--sys);
@@ -179,7 +136,6 @@ body {
   gap: 4px;
 }
 
-.ctrl-drift:hover,
 .ctrl-void:hover { color: var(--black); }
 
 /* ── MEMORY HOLES ── */
@@ -196,132 +152,6 @@ body {
 
 .memory-hole.is-visible {
   opacity: 1;
-}
-
-/* ── DRIFT MODAL ── */
-.drift-modal {
-  display: none;
-  position: fixed;
-  inset: 0;
-  background: var(--white);
-  z-index: 800;
-  opacity: 0;
-  transition: opacity 0.4s ease;
-  align-items: center;
-  justify-content: center;
-}
-
-.drift-modal.is-open {
-  display: flex;
-}
-
-.drift-modal.is-visible {
-  opacity: 1;
-}
-
-.drift-modal-inner {
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-  width: 100%;
-  max-width: 480px;
-  padding: 0 6vw;
-}
-
-.drift-modal-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-}
-
-.drift-modal-title {
-  font-family: var(--sys);
-  font-size: var(--sys-size);
-  font-weight: var(--sys-weight);
-  letter-spacing: var(--sys-spacing);
-  color: var(--black);
-  text-transform: lowercase;
-}
-
-.drift-modal-close {
-  font-family: var(--sys);
-  font-size: var(--sys-size);
-  font-weight: var(--sys-weight);
-  letter-spacing: var(--sys-spacing);
-  color: var(--muted);
-  background: none;
-  border: none;
-  padding: 0;
-  cursor: pointer;
-  text-transform: lowercase;
-  transition: color 0.2s ease;
-}
-
-.drift-modal-close:hover { color: var(--black); }
-
-.drift-prefix-select {
-  font-family: var(--drift);
-  font-size: var(--sys-size);
-  font-weight: 400;
-  letter-spacing: 0.08em;
-  color: var(--black);
-  background: none;
-  border: none;
-  border-bottom: 1px solid var(--faint);
-  padding: 8px 0;
-  width: 100%;
-  cursor: pointer;
-  appearance: none;
-  -webkit-appearance: none;
-  outline: none;
-}
-
-.drift-text-input {
-  font-family: var(--drift);
-  font-size: var(--sys-size);
-  font-weight: 400;
-  letter-spacing: 0.04em;
-  color: var(--black);
-  background: none;
-  border: none;
-  border-bottom: 1px solid var(--faint);
-  padding: 8px 0;
-  width: 100%;
-  resize: none;
-  height: 80px;
-  outline: none;
-  line-height: 1.6;
-}
-
-.drift-text-input::placeholder {
-  color: var(--faint);
-}
-
-.drift-submit {
-  font-family: var(--sys);
-  font-size: var(--sys-size);
-  font-weight: var(--sys-weight);
-  letter-spacing: var(--sys-spacing);
-  color: var(--muted);
-  background: none;
-  border: none;
-  padding: 0;
-  cursor: pointer;
-  text-transform: lowercase;
-  transition: color 0.2s ease;
-  text-align: left;
-}
-
-.drift-submit:hover { color: var(--black); }
-
-.drift-feedback {
-  font-family: var(--sys);
-  font-size: var(--sys-size);
-  font-weight: var(--sys-weight);
-  letter-spacing: var(--sys-spacing);
-  color: var(--muted);
-  text-transform: lowercase;
-  min-height: 1em;
 }
 
 /* ── VOID ── */
@@ -387,9 +217,6 @@ body {
   position: relative;
   text-align: right;
   display: block;
-}
-.archive.permalink-view .drift-entries:not(:empty) {
-  margin-top: 32px;
 }
 
 /* ── MOBILE ── */

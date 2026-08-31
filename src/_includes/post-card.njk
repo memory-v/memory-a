@@ -22,11 +22,5 @@
   {% if captionHtml %}
   <div class="caption">{{ captionHtml | safe }}</div>
   {% endif %}
-
-  <div class="drift-entries" data-artefact-id="{{ id }}"></div>
-
-  <div class="controls">
-    <button class="ctrl-drift" data-artefact-id="{{ id }}">drift</button>
-  </div>
 </article>
 {% endmacro %}

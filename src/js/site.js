@@ -32,8 +32,8 @@ function applyAgeSignal(post) {
 // ── IMAGE-WIDTH ALIGNMENT ──
 // Portrait images are height-capped (see .primary img), so they render
 // narrower than the post's full width and get centered. Measure the actual
-// rendered image width in JS and constrain/center the caption, age-signal,
-// controls and drift entries to match.
+// rendered image width in JS and constrain/center the caption and age-signal
+// to match.
 function alignPostToImage(post) {
   var img = post.querySelector('.primary img');
   if (!img) return;
@@ -44,12 +44,10 @@ function alignPostToImage(post) {
     var caption = post.querySelector('.caption');
     var headerRow = post.querySelector('.post-header-row');
     var age = headerRow || post.querySelector('.age-signal');
-    var controls = post.querySelector('.controls');
-    var drift = post.querySelector('.drift-entries');
 
     var narrow = imgWidth > 0 && imgWidth < postWidth - 4;
 
-    [caption, age, controls, drift].forEach(function(el) {
+    [caption, age].forEach(function(el) {
       if (!el) return;
       if (narrow) {
         el.style.maxWidth = imgWidth + 'px';
@@ -146,157 +144,6 @@ function wireVideoPlayback(video) {
   document.addEventListener('keydown', function(e) {
     if (e.key === 'Escape' && overlay.style.display === 'flex') closeVoid();
   });
-})();
-
-// ── DRIFT SYSTEM ──
-// Comment-like entries stored in Supabase, keyed by post id ("artefact id").
-// Fill in SUPABASE_URL / SUPABASE_KEY once you've created a free project.
-(function() {
-  var SUPABASE_URL = 'YOUR_SUPABASE_PROJECT_URL';
-  var SUPABASE_KEY = 'YOUR_SUPABASE_PUBLISHABLE_KEY';
-
-  var modal = document.getElementById('driftModal');
-  var closeBtn = document.getElementById('driftModalClose');
-  var prefixSelect = document.getElementById('driftPrefix');
-  var textInput = document.getElementById('driftText');
-  var submitBtn = document.getElementById('driftSubmit');
-  var feedback = document.getElementById('driftFeedback');
-  var currentArtefactId = null;
-
-  if (!modal) return;
-
-  function loadDriftEntries(artefactId, container) {
-    fetch(SUPABASE_URL + '/rest/v1/drift_entries?artefact_id=eq.' + artefactId + '&visible=eq.true&order=created_at.desc&limit=10', {
-      headers: {
-        'apikey': SUPABASE_KEY,
-        'Authorization': 'Bearer ' + SUPABASE_KEY
-      }
-    })
-    .then(function(res) { return res.json(); })
-    .then(function(entries) {
-      container.innerHTML = '';
-      if (!entries || entries.length === 0) return;
-
-      entries.forEach(function(entry, i) {
-        var total = entries.length;
-        var opacity = total === 1 ? 1 : 1 - (i / (total - 1)) * 0.92;
-
-        var el = document.createElement('div');
-        el.className = 'drift-entry';
-        el.style.opacity = opacity;
-
-        var prefix = document.createElement('span');
-        prefix.className = 'drift-prefix';
-        prefix.textContent = entry.prefix;
-
-        var body = document.createTextNode(entry.body);
-
-        el.appendChild(prefix);
-        el.appendChild(body);
-        container.appendChild(el);
-      });
-    })
-    .catch(function() {});
-  }
-
-  function initDriftEntries() {
-    document.querySelectorAll('.drift-entries[data-artefact-id]').forEach(function(container) {
-      var id = container.getAttribute('data-artefact-id');
-      if (id) loadDriftEntries(id, container);
-    });
-  }
-
-  function openDrift(artefactId) {
-    currentArtefactId = artefactId;
-    prefixSelect.value = '';
-    textInput.value = '';
-    feedback.textContent = '';
-    modal.classList.add('is-open');
-    requestAnimationFrame(function() {
-      requestAnimationFrame(function() {
-        modal.classList.add('is-visible');
-      });
-    });
-  }
-
-  function closeDrift() {
-    modal.classList.remove('is-visible');
-    setTimeout(function() {
-      modal.classList.remove('is-open');
-      currentArtefactId = null;
-    }, 400);
-  }
-
-  submitBtn.addEventListener('click', function() {
-    var prefix = prefixSelect.value;
-    var body = textInput.value.trim();
-
-    if (!prefix) { feedback.textContent = 'select a prefix'; return; }
-    if (!body) { feedback.textContent = 'write something'; return; }
-    if (!currentArtefactId) { feedback.textContent = 'error'; return; }
-
-    submitBtn.textContent = 'sending';
-    submitBtn.disabled = true;
-
-    fetch(SUPABASE_URL + '/rest/v1/drift_entries', {
-      method: 'POST',
-      headers: {
-        'apikey': SUPABASE_KEY,
-        'Authorization': 'Bearer ' + SUPABASE_KEY,
-        'Content-Type': 'application/json',
-        'Prefer': 'return=minimal'
-      },
-      body: JSON.stringify({
-        artefact_id: currentArtefactId,
-        prefix: prefix,
-        body: body,
-        visible: true
-      })
-    })
-    .then(function(res) {
-      if (res.ok) {
-        feedback.textContent = 'drift received';
-        submitBtn.textContent = 'submit';
-        submitBtn.disabled = false;
-        textInput.value = '';
-        prefixSelect.value = '';
-
-        var container = document.querySelector('.drift-entries[data-artefact-id="' + currentArtefactId + '"]');
-        if (container) loadDriftEntries(currentArtefactId, container);
-
-        setTimeout(closeDrift, 1200);
-      } else {
-        feedback.textContent = 'something went wrong';
-        submitBtn.textContent = 'submit';
-        submitBtn.disabled = false;
-      }
-    })
-    .catch(function() {
-      feedback.textContent = 'something went wrong';
-      submitBtn.textContent = 'submit';
-      submitBtn.disabled = false;
-    });
-  });
-
-  document.querySelectorAll('.ctrl-drift').forEach(function(btn) {
-    btn.addEventListener('click', function() {
-      var post = btn.closest('.post');
-      var id = post ? post.getAttribute('data-post-id') : null;
-      if (id) openDrift(id);
-    });
-  });
-
-  closeBtn.addEventListener('click', closeDrift);
-
-  modal.addEventListener('click', function(e) {
-    if (e.target === modal) closeDrift();
-  });
-
-  document.addEventListener('keydown', function(e) {
-    if (e.key === 'Escape' && modal.classList.contains('is-open')) closeDrift();
-  });
-
-  initDriftEntries();
 })();
 
 // ── MEMORY HOLES ──
