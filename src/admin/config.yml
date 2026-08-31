@@ -1,6 +1,9 @@
 backend:
-  name: git-gateway
+  name: github
+  repo: memory-v/memory-a
   branch: main
+  base_url: https://REPLACE_WITH_WORKER_URL
+  auth_endpoint: auth
 
 media_folder: "src/uploads"
 public_folder: "/uploads"

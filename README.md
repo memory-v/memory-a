@@ -2,7 +2,7 @@
 
 A static, self-contained version of the memory-a Tumblr theme — same design,
 no platform dependency. Built with Eleventy, edited via Decap CMS, hosted
-free on Netlify.
+free on GitHub Pages.
 
 ## Try it locally
 
@@ -23,25 +23,30 @@ feed update.
 - `src/_includes/` — the page shell (`base.njk`), the post card markup
   (`post-card.njk`), and the single-post layout (`post.njk`).
 - `src/css/style.css`, `src/js/site.js` — carried over from the original
-  Tumblr theme (drift, void, memory holes, spatial drift, age signal, video
-  playback), with the Tumblr-only `flux` control removed.
+  Tumblr theme (memory holes, spatial drift, age signal, video playback),
+  with the Tumblr-only `flux` control and the Supabase-backed `drift`
+  comment system removed.
 - `src/admin/` — Decap CMS, the posting form.
+- `.github/workflows/deploy.yml` — builds the site and deploys it to
+  GitHub Pages on every push (free, unlimited for a public repo).
+- `oauth-worker/` — the one small piece of server code the setup needs:
+  a Cloudflare Worker that handles the "log in with GitHub" handshake for
+  the posting form. See `oauth-worker/README.md` for one-time setup.
 
 ## Deploying (one-time setup)
 
-1. Push this folder to a new GitHub repo.
-2. Create a Netlify account (sign in with GitHub) and "Add new site → Import
-   from GitHub", pointing it at this repo. Netlify reads `netlify.toml`
-   automatically.
-3. In the deployed site's Netlify dashboard: **Site configuration → Identity
-   → Enable Identity**, then **Registration → Invite only**. Under
-   **Identity → Services**, enable **Git Gateway**.
-4. Invite yourself as a user under Identity, and accept the invite email.
-5. Visit `https://<your-site>.netlify.app/admin/` and log in — that's the
-   posting form from then on, from any device.
+1. Rename this GitHub repo to `<your-github-username>.github.io` (Settings
+   → repository name) — this makes GitHub Pages serve it at the domain
+   root, which is what the site's file paths assume. Skip this step only
+   if you're pointing a custom domain at it instead.
+2. In the repo: **Settings → Pages → Build and deployment → Source**, set
+   to **GitHub Actions**. The workflow in this repo handles the rest
+   automatically on every push.
+3. Follow `oauth-worker/README.md` to set up the posting form's login
+   (one-time, roughly 10 minutes).
 
 ## Posting a memory
 
 Go to `/admin/`, click "New Memories", pick photo or video, upload the file,
-write a caption, hit publish. Netlify rebuilds and redeploys automatically
-within a minute or two.
+write a caption, hit publish. GitHub Pages rebuilds and redeploys
+automatically within a minute or two.
