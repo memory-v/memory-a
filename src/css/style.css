@@ -199,7 +199,7 @@ body {
   background: var(--white);
   z-index: 1000;
   opacity: 1;
-  transition: opacity 5s ease;
+  transition: opacity 2s ease;
 }
 
 .page-reveal.is-hidden {

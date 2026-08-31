@@ -301,12 +301,19 @@ function wireVideoPlayback(video) {
   var reveal = document.getElementById('pageReveal');
   if (!reveal) return;
 
+  var pageStart = Date.now();
+  var MIN_HOLD_MS = 3000; // stay solid white for at least this long
+
   function hideReveal() {
-    requestAnimationFrame(function() {
+    var elapsed = Date.now() - pageStart;
+    var wait = Math.max(0, MIN_HOLD_MS - elapsed);
+    setTimeout(function() {
       requestAnimationFrame(function() {
-        reveal.classList.add('is-hidden');
+        requestAnimationFrame(function() {
+          reveal.classList.add('is-hidden');
+        });
       });
-    });
+    }, wait);
   }
 
   var visible = [];
