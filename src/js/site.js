@@ -158,47 +158,73 @@ function wireVideoPlayback(video) {
 
 // ── MEMORY HOLES ──
 // Random blurred fixed patches — only on the feed, not single-post pages.
+// After the initial batch fades in, they continue to drift: one at a time
+// fades out, gets reassigned a new size/position, then fades back in.
 (function() {
   if (document.querySelector('.archive.permalink-view')) return;
 
-  var count = Math.floor(Math.random() * 4) + 7;
   var body = document.body;
-
   var isMobile = window.innerWidth <= 800;
   var sizeMin = isMobile ? 40 : 80;
   var sizeRange = isMobile ? 100 : 200;
   var largeMin = isMobile ? 150 : 300;
   var largeRange = isMobile ? 50 : 100;
 
+  function randomize(hole) {
+    var size = Math.floor(Math.random() * sizeRange) + sizeMin;
+    if (Math.random() < 0.2) size = Math.floor(Math.random() * largeRange) + largeMin;
+    var w = size + Math.floor(Math.random() * 40) - 20;
+    var h = size + Math.floor(Math.random() * 40) - 20;
+
+    var x = Math.floor(Math.random() * 90) + 2;
+    var y = Math.floor(Math.random() * 85) + 5;
+
+    var blur = Math.floor(Math.random() * 6) + 6;
+
+    hole.style.width  = w + 'px';
+    hole.style.height = h + 'px';
+    hole.style.left   = x + 'vw';
+    hole.style.top    = y + 'vh';
+    hole.style.backdropFilter = 'blur(' + blur + 'px)';
+    hole.style.webkitBackdropFilter = 'blur(' + blur + 'px)';
+  }
+
+  var count = Math.floor(Math.random() * 4) + 7;
+  var holes = [];
+
   for (var i = 0; i < count; i++) {
     (function(index) {
       var hole = document.createElement('div');
       hole.className = 'memory-hole';
-
-      var size = Math.floor(Math.random() * sizeRange) + sizeMin;
-      if (Math.random() < 0.2) size = Math.floor(Math.random() * largeRange) + largeMin;
-      var w = size + Math.floor(Math.random() * 40) - 20;
-      var h = size + Math.floor(Math.random() * 40) - 20;
-
-      var x = Math.floor(Math.random() * 90) + 2;
-      var y = Math.floor(Math.random() * 85) + 5;
-
-      var blur = Math.floor(Math.random() * 6) + 6;
-
-      hole.style.width  = w + 'px';
-      hole.style.height = h + 'px';
-      hole.style.left   = x + 'vw';
-      hole.style.top    = y + 'vh';
-      hole.style.backdropFilter = 'blur(' + blur + 'px)';
-      hole.style.webkitBackdropFilter = 'blur(' + blur + 'px)';
-
+      randomize(hole);
       body.appendChild(hole);
+      holes.push(hole);
 
       setTimeout(function() {
         hole.classList.add('is-visible');
       }, 300 + index * 120);
     })(i);
   }
+
+  // Periodically cycle a random hole: fade out, reposition, fade back in.
+  // One at a time, on a random interval, so it reads as ambient drift
+  // rather than a jarring reflow.
+  function cycleOne() {
+    var hole = holes[Math.floor(Math.random() * holes.length)];
+    hole.classList.remove('is-visible');
+    setTimeout(function() {
+      randomize(hole);
+      hole.classList.add('is-visible');
+    }, 1200); // matches .memory-hole's opacity transition duration
+  }
+
+  (function scheduleNext() {
+    var delay = 2500 + Math.random() * 3500; // every 2.5–6s
+    setTimeout(function() {
+      cycleOne();
+      scheduleNext();
+    }, delay);
+  })();
 })();
 
 // ── SHUFFLE — random post order on every page load (feed only) ──
