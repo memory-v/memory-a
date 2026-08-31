@@ -302,7 +302,7 @@ function wireVideoPlayback(video) {
   if (!reveal) return;
 
   var pageStart = Date.now();
-  var MIN_HOLD_MS = 3000; // stay solid white for at least this long
+  var MIN_HOLD_MS = 1000; // stay solid white for at least this long
 
   function hideReveal() {
     var elapsed = Date.now() - pageStart;
