@@ -1,6 +1,6 @@
 backend:
   name: github
-  repo: memory-v/memory-a
+  repo: memory-v/memory-v.github.io
   branch: main
   base_url: https://REPLACE_WITH_WORKER_URL
   auth_endpoint: auth
