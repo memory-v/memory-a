@@ -198,16 +198,28 @@ function initMemoryHoles() {
   // shared timer touching one hole at a time. That avoids both the
   // initial batch reading as one synchronized wave, and any individual
   // hole going untouched for an oddly long stretch by chance.
+  // Fade-out and fade-in run at different speeds — a slow 4s dissolve out,
+  // a quicker 2s return — so vanishing feels like a still, mirage-like
+  // drift while reappearing doesn't feel sluggish.
+  function fadeOut(hole) {
+    hole.style.transitionDuration = '4s';
+    hole.classList.remove('is-visible');
+  }
+  function fadeIn(hole) {
+    hole.style.transitionDuration = '2s';
+    hole.classList.add('is-visible');
+  }
+
   function cycleForever(hole) {
     (function scheduleNext() {
       var delay = 6000 + Math.random() * 8000; // sit still for 6–14s
       setTimeout(function() {
-        hole.classList.remove('is-visible');
+        fadeOut(hole);
         setTimeout(function() {
           randomize(hole);
-          hole.classList.add('is-visible');
+          fadeIn(hole);
           scheduleNext();
-        }, 4000); // matches .memory-hole's opacity transition duration
+        }, 4000); // matches the fade-out duration above
       }, delay);
     })();
   }
@@ -219,12 +231,13 @@ function initMemoryHoles() {
       randomize(hole);
       body.appendChild(hole);
 
-      // Randomized initial appearance, not a fixed linear stagger, so the
-      // first reveal doesn't read as a synchronized wave either.
+      // Small randomized offset so the initial batch doesn't fade in as
+      // one perfectly synchronized wave, but still starts essentially
+      // together with the page-reveal white fade.
       setTimeout(function() {
-        hole.classList.add('is-visible');
+        fadeIn(hole);
         cycleForever(hole);
-      }, 200 + Math.random() * 1800);
+      }, Math.random() * 400);
     })();
   }
 }
@@ -312,9 +325,9 @@ function initMemoryHoles() {
       requestAnimationFrame(function() {
         requestAnimationFrame(function() {
           reveal.classList.add('is-hidden');
-          reveal.addEventListener('transitionend', function() {
-            if (typeof initMemoryHoles === 'function') initMemoryHoles();
-          }, { once: true });
+          // Start the memory holes fading in right alongside the white
+          // fade (both ~2s), rather than waiting for it to finish first.
+          if (typeof initMemoryHoles === 'function') initMemoryHoles();
         });
       });
     }, wait);
