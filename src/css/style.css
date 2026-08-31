@@ -61,7 +61,7 @@ body::before {
   font-size: 10px;
   font-weight: var(--sys-weight);
   letter-spacing: 0.14em;
-  color: var(--faint);
+  color: rgba(0,0,0,0.28);
   text-transform: lowercase;
 }
 
