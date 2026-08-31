@@ -192,41 +192,41 @@ function initMemoryHoles() {
   }
 
   var count = Math.floor(Math.random() * 4) + 7;
-  var holes = [];
+
+  // Each hole runs its own independent cycle — fade out, reposition,
+  // fade back in, wait a random stretch, repeat — rather than a single
+  // shared timer touching one hole at a time. That avoids both the
+  // initial batch reading as one synchronized wave, and any individual
+  // hole going untouched for an oddly long stretch by chance.
+  function cycleForever(hole) {
+    (function scheduleNext() {
+      var delay = 2500 + Math.random() * 3500; // every 2.5–6s
+      setTimeout(function() {
+        hole.classList.remove('is-visible');
+        setTimeout(function() {
+          randomize(hole);
+          hole.classList.add('is-visible');
+          scheduleNext();
+        }, 1200); // matches .memory-hole's opacity transition duration
+      }, delay);
+    })();
+  }
 
   for (var i = 0; i < count; i++) {
-    (function(index) {
+    (function() {
       var hole = document.createElement('div');
       hole.className = 'memory-hole';
       randomize(hole);
       body.appendChild(hole);
-      holes.push(hole);
 
+      // Randomized initial appearance, not a fixed linear stagger, so the
+      // first reveal doesn't read as a synchronized wave either.
       setTimeout(function() {
         hole.classList.add('is-visible');
-      }, 300 + index * 120);
-    })(i);
+        cycleForever(hole);
+      }, 200 + Math.random() * 1800);
+    })();
   }
-
-  // Periodically cycle a random hole: fade out, reposition, fade back in.
-  // One at a time, on a random interval, so it reads as ambient drift
-  // rather than a jarring reflow.
-  function cycleOne() {
-    var hole = holes[Math.floor(Math.random() * holes.length)];
-    hole.classList.remove('is-visible');
-    setTimeout(function() {
-      randomize(hole);
-      hole.classList.add('is-visible');
-    }, 1200); // matches .memory-hole's opacity transition duration
-  }
-
-  (function scheduleNext() {
-    var delay = 2500 + Math.random() * 3500; // every 2.5–6s
-    setTimeout(function() {
-      cycleOne();
-      scheduleNext();
-    }, delay);
-  })();
 }
 
 // ── SHUFFLE — random post order on every page load (feed only) ──
