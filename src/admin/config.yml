@@ -2,7 +2,7 @@ backend:
   name: github
   repo: memory-v/memory-v.github.io
   branch: main
-  base_url: https://REPLACE_WITH_WORKER_URL
+  base_url: https://memory-v-oauth.duroy-vic.workers.dev
   auth_endpoint: auth
 
 media_folder: "src/uploads"
