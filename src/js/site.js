@@ -39,6 +39,30 @@ function applyAgeSignal(post) {
   });
 })();
 
+// ── SQUARE IMAGE CAP ──
+// A near-square image sits right at the height cap while also filling the
+// full post width, so it fills the maximum space in both directions at
+// once and reads as oversized next to true portraits/landscapes. Give
+// near-square images (aspect ratio ~0.85–1.15) a tighter height cap.
+function capSquareImage(img) {
+  function apply() {
+    if (!img.naturalWidth || !img.naturalHeight) return;
+    var ratio = img.naturalWidth / img.naturalHeight;
+    if (ratio >= 0.85 && ratio <= 1.15) {
+      img.style.maxHeight = '560px';
+    }
+  }
+  if (img.complete) {
+    apply();
+  } else {
+    img.addEventListener('load', apply, { once: true });
+  }
+}
+
+(function() {
+  document.querySelectorAll('.primary img').forEach(capSquareImage);
+})();
+
 // ── IMAGE-WIDTH ALIGNMENT ──
 // Portrait images are height-capped (see .primary img), so they render
 // narrower than the post's full width and get centered. Measure the actual
