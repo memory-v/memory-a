@@ -159,9 +159,10 @@ function wireVideoPlayback(video) {
 
 // ── MEMORY HOLES ──
 // Random blurred fixed patches — only on the feed, not single-post pages.
-// After the initial batch fades in, they continue to drift: one at a time
-// fades out, gets reassigned a new size/position, then fades back in.
-(function() {
+// Held back until after the page-reveal fade finishes (see PAGE REVEAL
+// below), so they visibly fade in on top of the settled page rather than
+// appearing already-there the instant the white cover lifts.
+function initMemoryHoles() {
   if (document.querySelector('.archive.permalink-view')) return;
 
   var body = document.body;
@@ -226,7 +227,7 @@ function wireVideoPlayback(video) {
       scheduleNext();
     }, delay);
   })();
-})();
+}
 
 // ── SHUFFLE — random post order on every page load (feed only) ──
 (function() {
@@ -311,6 +312,9 @@ function wireVideoPlayback(video) {
       requestAnimationFrame(function() {
         requestAnimationFrame(function() {
           reveal.classList.add('is-hidden');
+          reveal.addEventListener('transitionend', function() {
+            if (typeof initMemoryHoles === 'function') initMemoryHoles();
+          }, { once: true });
         });
       });
     }, wait);
