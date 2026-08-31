@@ -101,7 +101,7 @@ body {
 
 /* ── CAPTION ── */
 .caption {
-  margin-top: 7px;
+  margin-top: 0;
   font-family: var(--narrative);
   font-size: var(--caption-size) !important;
   font-weight: 300 !important;
