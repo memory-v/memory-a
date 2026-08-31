@@ -36,6 +36,33 @@ body {
   font-family: var(--sys);
   font-weight: var(--sys-weight);
   -webkit-font-smoothing: antialiased;
+  position: relative;
+}
+
+/* Faint film-grain texture over the whole page — a little warmth and
+   physical, analog quality instead of flat digital white. Pure CSS, no
+   image asset: an SVG noise filter as a data URI. */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  opacity: 0.035;
+  mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* ── COLOPHON ── */
+.colophon {
+  text-align: center;
+  padding: 16px 0 0;
+  font-family: var(--sys);
+  font-size: 10px;
+  font-weight: var(--sys-weight);
+  letter-spacing: 0.14em;
+  color: var(--faint);
+  text-transform: lowercase;
 }
 
 /* ── ARCHIVE ── */
