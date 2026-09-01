@@ -1,5 +1,5 @@
 ---
-date: 2026-08-31
+date: 2026-06-01
 type: photo
 image: /uploads/000061730015.jpg
 ---
