@@ -16,7 +16,8 @@
         <source src="{{ video }}" type="video/mp4">
       </video>
     {% else %}
-      {% optimizedImage image, "" %}
+      {% set opt = image | optimizedImage %}
+      <img src="{{ opt.url }}" width="{{ opt.width }}" height="{{ opt.height }}" alt="" loading="lazy">
     {% endif %}
   </div>
 

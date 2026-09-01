@@ -1,3 +1,4 @@
+const fs = require("fs");
 const path = require("path");
 const sizeOf = require("image-size");
 const Image = require("@11ty/eleventy-img");
@@ -37,29 +38,52 @@ module.exports = function (eleventyConfig) {
     }
   });
 
-  // Resizes and recompresses every uploaded photo at build time — no
-  // matter how large the original file is, what actually ships is capped
-  // to a sensible max width and re-encoded as a reasonably compressed
-  // JPEG. Runs once per unique image (results are cached in .cache/), so
-  // rebuilds after the first stay fast.
-  eleventyConfig.addNunjucksAsyncShortcode("optimizedImage", async function (src, alt) {
-    if (!src) return "";
-    const inputPath = path.join(__dirname, "src", src);
-    try {
-      const metadata = await Image(inputPath, {
-        widths: [2000],
-        formats: ["jpeg"],
-        outputDir: path.join(__dirname, "_site", "uploads-optimized"),
-        urlPath: "/uploads-optimized/",
-        sharpJpegOptions: { quality: 80 },
-      });
-      const data = metadata.jpeg[0];
-      return `<img src="${data.url}" width="${data.width}" height="${data.height}" alt="${alt || ""}" loading="lazy">`;
-    } catch (e) {
-      // If anything goes wrong optimizing (unsupported format, etc.), fall
-      // back to serving the original file rather than breaking the build.
-      return `<img src="${src}" alt="${alt || ""}" loading="lazy">`;
+  // Resizes and recompresses every uploaded photo — no matter how large
+  // the original file is, what actually ships is capped to a sensible max
+  // width and re-encoded as a reasonably compressed JPEG.
+  //
+  // This runs *before* templates render (via the eleventy.before hook)
+  // rather than as an async shortcode called during rendering — async
+  // shortcodes don't reliably resolve when called from inside a Nunjucks
+  // macro (which post-card.njk is), silently producing empty output
+  // instead of an image. Precomputing into a plain synchronous lookup
+  // table sidesteps that entirely.
+  const optimizedImageCache = {};
+
+  eleventyConfig.on("eleventy.before", async () => {
+    const postsDir = path.join(__dirname, "src", "posts");
+    if (!fs.existsSync(postsDir)) return;
+
+    const files = fs.readdirSync(postsDir).filter((f) => f.endsWith(".md"));
+    for (const file of files) {
+      const content = fs.readFileSync(path.join(postsDir, file), "utf8");
+      const match = content.match(/^image:\s*(\S+)\s*$/m);
+      if (!match) continue;
+      const src = match[1].trim();
+      if (optimizedImageCache[src]) continue;
+
+      const inputPath = path.join(__dirname, "src", src);
+      try {
+        const metadata = await Image(inputPath, {
+          widths: [2000],
+          formats: ["jpeg"],
+          outputDir: path.join(__dirname, "_site", "uploads-optimized"),
+          urlPath: "/uploads-optimized/",
+          sharpJpegOptions: { quality: 80 },
+        });
+        const data = metadata.jpeg[0];
+        optimizedImageCache[src] = { url: data.url, width: data.width, height: data.height };
+      } catch (e) {
+        // If optimization fails for any reason, fall back to the original
+        // file rather than breaking the build.
+        optimizedImageCache[src] = { url: src, width: 0, height: 0 };
+      }
     }
+  });
+
+  eleventyConfig.addFilter("optimizedImage", function (src) {
+    if (!src) return { url: "", width: 0, height: 0 };
+    return optimizedImageCache[src] || { url: src, width: 0, height: 0 };
   });
 
   return {
