@@ -39,3 +39,5 @@ collections:
       - { label: "Date added", name: "date", widget: "datetime", format: "YYYY-MM-DD", date_format: "YYYY-MM-DD", time_format: false }
       - { label: "Song title", name: "title", widget: "string" }
       - { label: "Artist", name: "artist", widget: "string" }
+      - { label: "Release year", name: "year", widget: "number", required: false, value_type: "int" }
+      - { label: "Runtime", name: "runtime", widget: "string", required: false, hint: "e.g. 3:45" }

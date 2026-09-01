@@ -10,7 +10,11 @@ layout: base.njk
     {% for song in collections.songs %}
     <li class="song-row">
       <span class="song-title">{{ song.data.title }}</span>
-      <span class="song-artist">{{ song.data.artist }}</span>
+      <span class="song-meta">
+        <span class="song-artist">{{ song.data.artist }}</span>
+        {% if song.data.year %}<span class="song-year">{{ song.data.year }}</span>{% endif %}
+        {% if song.data.runtime %}<span class="song-runtime">{{ song.data.runtime }}</span>{% endif %}
+      </span>
     </li>
     {% endfor %}
   </ul>

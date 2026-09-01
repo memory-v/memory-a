@@ -49,6 +49,8 @@ const headers = lines[0].split("\t").map(function (h) { return h.trim().toLowerC
 const nameIdx = headers.indexOf("name");
 const artistIdx = headers.indexOf("artist");
 const dateAddedIdx = headers.indexOf("date added");
+const yearIdx = headers.indexOf("year");
+const timeIdx = headers.indexOf("time");
 
 if (nameIdx === -1 || artistIdx === -1) {
   console.error("Couldn't find 'Name' and 'Artist' columns. Found headers: " + headers.join(", "));
@@ -79,6 +81,20 @@ function escapeYaml(str) {
   return String(str).replace(/"/g, '\\"');
 }
 
+// Music.app's "Time" column is usually already "m:ss", but some export
+// paths give raw seconds instead — normalize either into "m:ss".
+function formatRuntime(value) {
+  if (!value) return null;
+  var trimmed = String(value).trim();
+  if (!trimmed) return null;
+  if (trimmed.indexOf(":") !== -1) return trimmed;
+  var totalSeconds = parseInt(trimmed, 10);
+  if (isNaN(totalSeconds)) return null;
+  var mins = Math.floor(totalSeconds / 60);
+  var secs = totalSeconds % 60;
+  return mins + ":" + String(secs).padStart(2, "0");
+}
+
 var count = 0;
 var seenSlugs = {};
 
@@ -90,6 +106,9 @@ for (var i = 1; i < lines.length; i++) {
 
   var dateAdded = dateAddedIdx !== -1 ? cols[dateAddedIdx] : null;
   var dateStr = formatDate(dateAdded);
+
+  var year = yearIdx !== -1 ? parseInt((cols[yearIdx] || "").trim(), 10) : NaN;
+  var runtime = timeIdx !== -1 ? formatRuntime(cols[timeIdx]) : null;
 
   var baseSlug = dateStr + "-" + slugify(title + "-" + artist);
   var slug = baseSlug;
@@ -105,6 +124,8 @@ for (var i = 1; i < lines.length; i++) {
     "date: " + dateStr + "\n" +
     'title: "' + escapeYaml(title) + '"\n' +
     'artist: "' + escapeYaml(artist) + '"\n' +
+    (!isNaN(year) ? "year: " + year + "\n" : "") +
+    (runtime ? 'runtime: "' + escapeYaml(runtime) + '"\n' : "") +
     "---\n";
 
   fs.writeFileSync(path.join(outDir, slug + ".md"), frontmatter);

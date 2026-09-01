@@ -286,12 +286,29 @@ body::before {
   color: var(--black);
 }
 
+.song-meta {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+  flex-shrink: 0;
+}
+
 .song-artist {
   font-family: var(--sys);
   font-size: 11px;
   font-weight: var(--sys-weight);
   letter-spacing: 0.1em;
   color: var(--muted);
+  white-space: nowrap;
+}
+
+.song-year,
+.song-runtime {
+  font-family: var(--sys);
+  font-size: 11px;
+  font-weight: var(--sys-weight);
+  letter-spacing: 0.1em;
+  color: var(--faint);
   white-space: nowrap;
 }
 
