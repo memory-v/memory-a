@@ -165,7 +165,7 @@ function initSongFadeIn() {
   var rows = document.querySelectorAll('.song-row');
   if (!rows.length) return;
 
-  var totalMs = 4000;
+  var totalMs = 2000;
   rows.forEach(function(row, i) {
     var delay = rows.length > 1 ? (i / (rows.length - 1)) * totalMs : 0;
     setTimeout(function() {
