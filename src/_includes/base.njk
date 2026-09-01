@@ -17,7 +17,13 @@
      seen popping in, repositioning, or sliding into place. -->
 <div class="page-reveal" id="pageReveal"></div>
 
-<div class="colophon">a personal archive, begun June 2026 · <a href="/listening/">listening</a></div>
+<div class="top-nav">
+  {% if page.url == "/music/" %}
+    <a href="/">access memory-v</a>
+  {% else %}
+    <a href="/music/">music</a>
+  {% endif %}
+</div>
 
 {{ content | safe }}
 
