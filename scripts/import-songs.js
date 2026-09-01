@@ -16,17 +16,32 @@ if (!inputPath) {
   process.exit(1);
 }
 
-const raw = fs.readFileSync(inputPath, "utf16le").length > 0
-  ? fs.readFileSync(inputPath, "utf16le")
-  : fs.readFileSync(inputPath, "utf8");
+// Detect the actual encoding from the file's byte-order-mark rather than
+// guessing — Music.app's export can be UTF-16 (LE or BE) or plain UTF-8
+// depending on macOS version.
+const buf = fs.readFileSync(inputPath);
+let text;
+if (buf[0] === 0xff && buf[1] === 0xfe) {
+  text = buf.slice(2).toString("utf16le");
+} else if (buf[0] === 0xfe && buf[1] === 0xff) {
+  // UTF-16BE: swap byte pairs, then decode as LE.
+  const swapped = Buffer.alloc(buf.length - 2);
+  for (let i = 2; i + 1 < buf.length; i += 2) {
+    swapped[i - 2] = buf[i + 1];
+    swapped[i - 1] = buf[i];
+  }
+  text = swapped.toString("utf16le");
+} else if (buf[0] === 0xef && buf[1] === 0xbb && buf[2] === 0xbf) {
+  text = buf.slice(3).toString("utf8");
+} else {
+  text = buf.toString("utf8");
+}
 
-// Music.app's text export is usually UTF-16 with a BOM; fall back to UTF-8
-// if that produces garbage (no tab characters found).
-const text = raw.includes("\t") ? raw : fs.readFileSync(inputPath, "utf8");
-
-const lines = text.split(/\r?\n/).filter(function (l) { return l.trim().length > 0; });
+// Split on any line-ending style, including lone CR (older Mac exports).
+const lines = text.split(/\r\n|\r|\n/).filter(function (l) { return l.trim().length > 0; });
 if (lines.length < 2) {
-  console.error("No rows found — is this the right file?");
+  console.error("No rows found after reading " + buf.length + " bytes. First 200 characters:");
+  console.error(JSON.stringify(text.slice(0, 200)));
   process.exit(1);
 }
 
