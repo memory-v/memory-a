@@ -273,7 +273,7 @@ body::before {
 
 .song-row {
   display: grid;
-  grid-template-columns: 1fr 220px 48px 56px;
+  grid-template-columns: 44px 1fr 220px 48px;
   align-items: baseline;
   gap: 20px;
   padding: 3px 0;
@@ -303,8 +303,7 @@ body::before {
   text-align: right;
 }
 
-.song-year,
-.song-runtime {
+.song-year {
   font-family: var(--sys);
   font-size: 11px;
   font-weight: var(--sys-weight);
@@ -312,6 +311,17 @@ body::before {
   color: var(--faint);
   white-space: nowrap;
   text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.song-runtime {
+  font-family: var(--sys);
+  font-size: 11px;
+  font-weight: var(--sys-weight);
+  letter-spacing: 0.1em;
+  color: var(--faint);
+  white-space: nowrap;
+  text-align: left;
   font-variant-numeric: tabular-nums;
 }
 
