@@ -191,7 +191,7 @@ function initMemoryHoles() {
     hole.style.webkitBackdropFilter = 'blur(' + blur + 'px)';
   }
 
-  var count = Math.floor(Math.random() * 4) + 7;
+  var count = Math.floor(Math.random() * 4) + 5;
 
   // Each hole runs its own independent cycle — fade out, reposition,
   // fade back in, wait a random stretch, repeat — rather than a single
