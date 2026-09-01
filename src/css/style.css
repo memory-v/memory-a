@@ -292,7 +292,6 @@ body::before {
   font-weight: var(--sys-weight);
   letter-spacing: 0.1em;
   color: var(--muted);
-  text-transform: lowercase;
   white-space: nowrap;
 }
 
