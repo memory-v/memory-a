@@ -206,7 +206,7 @@ function initMemoryHoles() {
     hole.classList.remove('is-visible');
   }
   function fadeIn(hole) {
-    hole.style.transitionDuration = '2s';
+    hole.style.transitionDuration = '1s';
     hole.classList.add('is-visible');
   }
 

@@ -235,7 +235,7 @@ body::before {
   background: var(--white);
   z-index: 1000;
   opacity: 1;
-  transition: opacity 2s ease;
+  transition: opacity 1s ease;
 }
 
 .page-reveal.is-hidden {
