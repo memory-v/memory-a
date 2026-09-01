@@ -24,8 +24,7 @@ function formatAgeSignal(dateStr) {
   return diffDays.toString().padStart(5, '0');
 }
 
-function applyAgeSignal(post) {
-  var el = post.querySelector ? post.querySelector('.age-signal') : post;
+function applyAgeSignal(el) {
   if (!el) return;
   var dateStr = el.getAttribute('data-post-date');
   if (!dateStr) return;
