@@ -5,6 +5,8 @@ image: /uploads/img_5190.jpg
 ---
 Pedalboard and amp, September 1, 2026.
 
+Pedaltrain "Classic JR"
+CIOKS "Sol"
 MASF Pedals "Raptio"
 BOSS "Blues Driver BD-2w"
 Moth Electric "A. incorrupta"
