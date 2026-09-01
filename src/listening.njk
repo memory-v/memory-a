@@ -1,0 +1,20 @@
+---
+layout: base.njk
+---
+<div class="listening">
+  <div class="listening-header">
+    <a class="archive-footer-link" href="/">access memory-a</a>
+    <div class="listening-title">listening</div>
+  </div>
+  <ul class="song-list">
+    {% for song in collections.songs %}
+    <li class="song-row">
+      <span class="song-title">{{ song.data.title }}</span>
+      <span class="song-artist">{{ song.data.artist }}</span>
+    </li>
+    {% endfor %}
+  </ul>
+  {% if collections.songs.length == 0 %}
+  <p class="song-empty">nothing archived yet.</p>
+  {% endif %}
+</div>

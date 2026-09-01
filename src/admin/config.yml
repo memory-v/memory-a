@@ -28,3 +28,14 @@ collections:
       - { label: "Video", name: "video", widget: "file", required: false, hint: "For video posts (.mp4)" }
       - { label: "Video poster frame", name: "poster", widget: "image", required: false, hint: "Optional still shown before the video plays" }
       - { label: "Caption", name: "body", widget: "markdown", required: false }
+
+  - name: "songs"
+    label: "Listening"
+    folder: "src/songs"
+    create: true
+    slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
+    identifier_field: title
+    fields:
+      - { label: "Date added", name: "date", widget: "datetime", format: "YYYY-MM-DD", date_format: "YYYY-MM-DD", time_format: false }
+      - { label: "Song title", name: "title", widget: "string" }
+      - { label: "Artist", name: "artist", widget: "string" }

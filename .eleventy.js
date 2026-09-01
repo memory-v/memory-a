@@ -14,6 +14,12 @@ module.exports = function (eleventyConfig) {
     });
   });
 
+  eleventyConfig.addCollection("songs", function (collectionApi) {
+    return collectionApi.getFilteredByGlob("src/songs/*.md").sort((a, b) => {
+      return new Date(b.data.date) - new Date(a.data.date);
+    });
+  });
+
   // Reads an uploaded image's real pixel dimensions at build time (e.g.
   // "/uploads/foo.jpg" -> {width, height}), so the <img> tag can carry its
   // true aspect ratio and the browser reserves the right amount of space
