@@ -86,6 +86,22 @@ module.exports = function (eleventyConfig) {
     return optimizedImageCache[src] || { url: src, width: 0, height: 0 };
   });
 
+  // YAML frontmatter silently parses an unquoted "date: 2016-10-29" into a
+  // real JS Date object rather than the string "2016-10-29" — printing
+  // that directly gives something like "Sat Oct 29 2016 00:00:00 GMT...",
+  // which the age-signal's JS date parser can't read. Always format
+  // through this filter wherever a date is written into the page, so it's
+  // reliably "YYYY-MM-DD" regardless of what type the frontmatter value
+  // came in as.
+  eleventyConfig.addFilter("isoDate", function (value) {
+    const d = value instanceof Date ? value : new Date(value);
+    if (isNaN(d.getTime())) return "";
+    const y = d.getUTCFullYear();
+    const m = String(d.getUTCMonth() + 1).padStart(2, "0");
+    const day = String(d.getUTCDate()).padStart(2, "0");
+    return `${y}-${m}-${day}`;
+  });
+
   return {
     dir: {
       input: "src",
