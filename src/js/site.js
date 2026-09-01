@@ -261,6 +261,25 @@ function initMemoryHoles() {
   });
 })();
 
+// ── SHUFFLE — random song order on every load of the listening page ──
+(function() {
+  var list = document.querySelector('.song-list');
+  if (!list) return;
+  var rows = Array.from(list.querySelectorAll('.song-row'));
+  if (rows.length < 2) return;
+
+  for (var i = rows.length - 1; i > 0; i--) {
+    var j = Math.floor(Math.random() * (i + 1));
+    var temp = rows[i];
+    rows[i] = rows[j];
+    rows[j] = temp;
+  }
+
+  rows.forEach(function(row) {
+    list.appendChild(row);
+  });
+})();
+
 // ── SPATIAL DRIFT — random horizontal offset per post per load (feed only) ──
 (function() {
   function randomFraction() {
