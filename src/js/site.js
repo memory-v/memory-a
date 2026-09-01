@@ -157,6 +157,23 @@ function wireVideoPlayback(video) {
   });
 })();
 
+// ── SONG LIST FADE-IN ──
+// Rows fade in top to bottom, staggered across a fixed total duration
+// regardless of how many songs there are — so this stays quick even as
+// the archive grows, rather than a fixed delay per row.
+function initSongFadeIn() {
+  var rows = document.querySelectorAll('.song-row');
+  if (!rows.length) return;
+
+  var totalMs = 1800;
+  rows.forEach(function(row, i) {
+    var delay = rows.length > 1 ? (i / (rows.length - 1)) * totalMs : 0;
+    setTimeout(function() {
+      row.classList.add('is-visible');
+    }, delay);
+  });
+}
+
 // ── MEMORY HOLES ──
 // Random blurred fixed patches — only on the feed, not single-post pages.
 // Held back until after the page-reveal fade finishes (see PAGE REVEAL
@@ -344,9 +361,10 @@ function initMemoryHoles() {
       requestAnimationFrame(function() {
         requestAnimationFrame(function() {
           reveal.classList.add('is-hidden');
-          // Start the memory holes fading in right alongside the white
-          // fade (both ~2s), rather than waiting for it to finish first.
+          // Start the memory holes / song rows fading in right alongside
+          // the white fade, rather than waiting for it to finish first.
           if (typeof initMemoryHoles === 'function') initMemoryHoles();
+          if (typeof initSongFadeIn === 'function') initSongFadeIn();
         });
       });
     }, wait);
