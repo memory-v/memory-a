@@ -21,7 +21,7 @@ function formatAgeSignal(dateStr) {
   var now = new Date();
   var nowDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
   var diffDays = Math.floor((nowDate - postDate) / (1000 * 60 * 60 * 24));
-  return diffDays.toString().padStart(4, '0');
+  return diffDays.toString().padStart(5, '0');
 }
 
 function applyAgeSignal(post) {
