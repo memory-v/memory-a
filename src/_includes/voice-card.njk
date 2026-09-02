@@ -1,0 +1,18 @@
+{% macro card(id, date, audio, captionHtml) %}
+{% set isoDateStr = date | isoDate %}
+<article class="post" data-post-id="{{ id }}" data-post-date="{{ isoDateStr }}">
+  <div class="age-signal" data-post-date="{{ isoDateStr }}">00000</div>
+
+  <div class="primary">
+    <div class="voice-player">
+      <audio preload="none" src="{{ audio }}"></audio>
+      <button class="voice-play-btn" type="button" aria-label="play">&#9654;</button>
+      <div class="voice-progress"><div class="voice-progress-fill"></div></div>
+    </div>
+  </div>
+
+  {% if captionHtml %}
+  <div class="caption">{{ captionHtml | safe }}</div>
+  {% endif %}
+</article>
+{% endmacro %}

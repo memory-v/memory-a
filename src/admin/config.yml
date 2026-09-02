@@ -41,3 +41,14 @@ collections:
       - { label: "Artist", name: "artist", widget: "string" }
       - { label: "Release year", name: "year", widget: "number", required: false, value_type: "int" }
       - { label: "Runtime", name: "runtime", widget: "string", required: false, hint: "e.g. 3:45" }
+
+  - name: "voiceMemos"
+    label: "Voice Memos"
+    folder: "src/voice-memos"
+    create: true
+    slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
+    identifier_field: date
+    fields:
+      - { label: "Date", name: "date", widget: "datetime", format: "YYYY-MM-DD", date_format: "YYYY-MM-DD", time_format: false }
+      - { label: "Audio file", name: "audio", widget: "file", hint: "e.g. .m4a, .mp3, .wav" }
+      - { label: "Note (optional)", name: "body", widget: "markdown", required: false }

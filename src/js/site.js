@@ -156,6 +156,53 @@ function wireVideoPlayback(video) {
   });
 })();
 
+// ── VOICE MEMO PLAYER ──
+// Simple custom play/pause + progress line, wired to a hidden native
+// <audio> element (kept preload="none" so nothing downloads until played).
+(function() {
+  var players = document.querySelectorAll('.voice-player');
+  if (!players.length) return;
+
+  var PLAY = '▶';   // ▶
+  var PAUSE = '❚❚'; // ❚❚
+
+  players.forEach(function(player) {
+    var audio = player.querySelector('audio');
+    var btn = player.querySelector('.voice-play-btn');
+    var fill = player.querySelector('.voice-progress-fill');
+    if (!audio || !btn || !fill) return;
+
+    btn.addEventListener('click', function() {
+      // Pause any other currently-playing voice memo first — only one at
+      // a time makes sense for a spoken recording.
+      document.querySelectorAll('.voice-player audio').forEach(function(other) {
+        if (other !== audio && !other.paused) other.pause();
+      });
+
+      if (audio.paused) {
+        audio.play().catch(function() {});
+      } else {
+        audio.pause();
+      }
+    });
+
+    audio.addEventListener('play', function() {
+      btn.innerHTML = PAUSE;
+    });
+    audio.addEventListener('pause', function() {
+      btn.innerHTML = PLAY;
+    });
+    audio.addEventListener('ended', function() {
+      btn.innerHTML = PLAY;
+      fill.style.width = '0%';
+    });
+    audio.addEventListener('timeupdate', function() {
+      if (!audio.duration) return;
+      fill.style.width = ((audio.currentTime / audio.duration) * 100) + '%';
+    });
+  });
+})();
+
 // ── SONG LIST FADE-IN ──
 // Rows fade in top to bottom, staggered across a fixed total duration
 // regardless of how many songs there are — so this stays quick even as
