@@ -3,4 +3,4 @@ date: 2018-05-17
 type: photo
 image: /uploads/img_5612.jpeg
 ---
-Window display seen at Paul Smith, Floral Street, London, May 17, 2018.
+Window display, Paul Smith, Floral Street, London, May 17, 2018.
