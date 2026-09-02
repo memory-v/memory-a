@@ -152,7 +152,7 @@ body::before {
 
 /* ── CAPTION ── */
 .caption {
-  margin-top: 0;
+  margin-top: 7px;
   font-family: var(--narrative);
   font-size: var(--caption-size) !important;
   font-weight: 300 !important;
