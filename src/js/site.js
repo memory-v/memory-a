@@ -285,19 +285,21 @@ function initMemoryHoles() {
     var zonePxH = (vh / rows);
     var zoneCap = Math.min(zonePxW, zonePxH) * 0.7;
 
-    var sizeMin = clamp(vw * 0.035, 28, 90);
-    var sizeRange = clamp(vw * 0.055, 28, 100);
-    var largeMin = clamp(vw * 0.09, 60, 160);
-    var largeRange = clamp(vw * 0.035, 25, 70);
+    // Size as a fraction of this zone's own cap, not an absolute value
+    // clamped down afterward — that old approach pushed most rolls to the
+    // same ceiling instead of a real spread. Skewed toward the smaller
+    // end (squaring the random factor) so small/medium holes are common
+    // and the occasional one near the cap reads as a real accent, while
+    // the maximum size stays exactly where it was.
+    var minFactor = 0.18;
+    var skew = Math.pow(Math.random(), 1.6);
+    var size = zoneCap * (minFactor + (1 - minFactor) * skew);
 
-    var size = Math.floor(Math.random() * sizeRange) + sizeMin;
-    // Large "statement" variant — kept rare (10%) so it reads as a
-    // deliberate accent rather than routine visual noise.
-    if (Math.random() < 0.1) size = Math.floor(Math.random() * largeRange) + largeMin;
-    size = Math.min(size, zoneCap);
-
-    var w = clamp(size + Math.floor(Math.random() * 40) - 20, 20, zoneCap);
-    var h = clamp(size + Math.floor(Math.random() * 40) - 20, 20, zoneCap);
+    // More generous, size-relative aspect jitter for real shape variety
+    // (a tall sliver here, a wide one there) rather than everything being
+    // a near-square blob.
+    var w = clamp(size + (Math.random() * size * 0.6) - size * 0.3, 20, zoneCap);
+    var h = clamp(size + (Math.random() * size * 0.6) - size * 0.3, 20, zoneCap);
 
     // Jitter within the zone, in vw/vh so it still responds correctly to
     // the live resize handler below.
