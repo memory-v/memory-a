@@ -160,6 +160,16 @@ body::before {
   padding: 7px 0;
 }
 
+/* Voice-memos page only: the player is narrower than a full post, but
+   without an image for the alignment script to measure, the age-signal
+   and caption would otherwise stay full-width and drift away from it. */
+.voice-archive .age-signal,
+.voice-archive .caption {
+  max-width: 50%;
+  margin-left: 0;
+  margin-right: 0;
+}
+
 .voice-play-btn {
   flex-shrink: 0;
   width: 32px;
@@ -396,6 +406,11 @@ body::before {
   }
 
   .voice-player {
+    max-width: 75%;
+  }
+
+  .voice-archive .age-signal,
+  .voice-archive .caption {
     max-width: 75%;
   }
 }

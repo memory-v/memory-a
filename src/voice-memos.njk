@@ -2,7 +2,7 @@
 layout: base.njk
 ---
 {% from "voice-card.njk" import card %}
-<div class="archive">
+<div class="archive voice-archive">
   {% for memo in collections.voiceMemos %}
     {{ card(memo.fileSlug, memo.data.date, memo.data.audio, memo.templateContent) }}
   {% endfor %}
