@@ -260,25 +260,53 @@ function initMemoryHoles() {
     return Math.max(min, Math.min(max, v));
   }
 
-  // Sized as a percentage of the current viewport width rather than fixed
-  // pixels, so a hole reads as "roughly the same relative size" whether
-  // it's a phone or a wide desktop monitor — no separate mobile/desktop
-  // breakpoint needed. Clamped at both ends so it never gets absurdly
-  // tiny or huge on extreme viewport sizes.
+  var count = Math.floor(Math.random() * 4) + 5;
+
+  // Divide the viewport into a loose grid with roughly one cell per hole,
+  // and keep each hole confined to its own cell (with jitter inside it)
+  // for its whole lifetime. Pure independent randomness, at only 5-8
+  // points, clusters far more often than it looks "evenly scattered" —
+  // this guarantees spread by construction while the jitter keeps it
+  // from reading as a rigid, obviously-gridded layout.
+  var cols = Math.ceil(Math.sqrt(count));
+  var rows = Math.ceil(count / cols);
+
+  // Sized as a percentage of the current viewport rather than fixed
+  // pixels, so a hole reads as "roughly the same relative size" on any
+  // device — but also capped to a fraction of its own zone's dimensions,
+  // so it can never grow large enough to spill into a neighboring zone
+  // and recreate the clustering effect from within a single cell.
   function randomize(hole) {
     var vw = window.innerWidth;
+    var vh = window.innerHeight;
+    var zone = hole._zone;
+
+    var zonePxW = (vw / cols);
+    var zonePxH = (vh / rows);
+    var zoneCap = Math.min(zonePxW, zonePxH) * 0.7;
+
     var sizeMin = clamp(vw * 0.035, 28, 90);
     var sizeRange = clamp(vw * 0.055, 28, 100);
     var largeMin = clamp(vw * 0.09, 60, 160);
     var largeRange = clamp(vw * 0.035, 25, 70);
 
     var size = Math.floor(Math.random() * sizeRange) + sizeMin;
-    if (Math.random() < 0.2) size = Math.floor(Math.random() * largeRange) + largeMin;
-    var w = size + Math.floor(Math.random() * 40) - 20;
-    var h = size + Math.floor(Math.random() * 40) - 20;
+    // Large "statement" variant — kept rare (10%) so it reads as a
+    // deliberate accent rather than routine visual noise.
+    if (Math.random() < 0.1) size = Math.floor(Math.random() * largeRange) + largeMin;
+    size = Math.min(size, zoneCap);
 
-    var x = Math.floor(Math.random() * 90) + 2;
-    var y = Math.floor(Math.random() * 85) + 5;
+    var w = clamp(size + Math.floor(Math.random() * 40) - 20, 20, zoneCap);
+    var h = clamp(size + Math.floor(Math.random() * 40) - 20, 20, zoneCap);
+
+    // Jitter within the zone, in vw/vh so it still responds correctly to
+    // the live resize handler below.
+    var zoneVwW = 100 / cols;
+    var zoneVhH = 100 / rows;
+    var marginVw = zoneVwW * 0.15;
+    var marginVh = zoneVhH * 0.15;
+    var x = zone.col * zoneVwW + marginVw + Math.random() * Math.max(0, zoneVwW - marginVw * 2);
+    var y = zone.row * zoneVhH + marginVh + Math.random() * Math.max(0, zoneVhH - marginVh * 2);
 
     var blur = Math.floor(Math.random() * 6) + 6;
 
@@ -290,7 +318,6 @@ function initMemoryHoles() {
     hole.style.webkitBackdropFilter = 'blur(' + blur + 'px)';
   }
 
-  var count = Math.floor(Math.random() * 4) + 5;
   var holes = [];
 
   // Each hole runs its own independent cycle — fade out, reposition,
@@ -325,9 +352,10 @@ function initMemoryHoles() {
   }
 
   for (var i = 0; i < count; i++) {
-    (function() {
+    (function(index) {
       var hole = document.createElement('div');
       hole.className = 'memory-hole';
+      hole._zone = { col: index % cols, row: Math.floor(index / cols) };
       randomize(hole);
       body.appendChild(hole);
       holes.push(hole);
@@ -339,7 +367,7 @@ function initMemoryHoles() {
         fadeIn(hole);
         cycleForever(hole);
       }, Math.random() * 400);
-    })();
+    })(i);
   }
 
   // Re-size (and reposition) every hole immediately when the window is
