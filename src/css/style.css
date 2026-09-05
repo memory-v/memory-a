@@ -155,8 +155,9 @@ body::before {
 .voice-player {
   display: flex;
   align-items: center;
-  gap: 16px;
-  padding: 28px 0;
+  gap: 12px;
+  max-width: 50%;
+  padding: 7px 0;
 }
 
 .voice-play-btn {
@@ -392,5 +393,9 @@ body::before {
   .post {
     max-width: 100%;
     margin-bottom: var(--gap-post-mob);
+  }
+
+  .voice-player {
+    max-width: 75%;
   }
 }

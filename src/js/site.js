@@ -229,13 +229,23 @@ function initMemoryHoles() {
   if (document.querySelector('.archive.permalink-view')) return;
 
   var body = document.body;
-  var isMobile = window.innerWidth <= 800;
-  var sizeMin = isMobile ? 40 : 80;
-  var sizeRange = isMobile ? 100 : 200;
-  var largeMin = isMobile ? 150 : 300;
-  var largeRange = isMobile ? 50 : 100;
 
+  function clamp(v, min, max) {
+    return Math.max(min, Math.min(max, v));
+  }
+
+  // Sized as a percentage of the current viewport width rather than fixed
+  // pixels, so a hole reads as "roughly the same relative size" whether
+  // it's a phone or a wide desktop monitor — no separate mobile/desktop
+  // breakpoint needed. Clamped at both ends so it never gets absurdly
+  // tiny or huge on extreme viewport sizes.
   function randomize(hole) {
+    var vw = window.innerWidth;
+    var sizeMin = clamp(vw * 0.06, 40, 140);
+    var sizeRange = clamp(vw * 0.10, 40, 160);
+    var largeMin = clamp(vw * 0.16, 100, 320);
+    var largeRange = clamp(vw * 0.06, 40, 120);
+
     var size = Math.floor(Math.random() * sizeRange) + sizeMin;
     if (Math.random() < 0.2) size = Math.floor(Math.random() * largeRange) + largeMin;
     var w = size + Math.floor(Math.random() * 40) - 20;
