@@ -180,7 +180,18 @@ function wireVideoPlayback(video) {
       var source = ctx.createMediaElementSource(audio);
       var gainNode = ctx.createGain();
       gainNode.gain.value = BOOST;
-      source.connect(gainNode).connect(ctx.destination);
+
+      // A compressor/limiter after the gain boost — it squashes loud
+      // peaks down rather than letting them clip, so quiet parts of the
+      // recording still get louder without the loud parts distorting.
+      var compressor = ctx.createDynamicsCompressor();
+      compressor.threshold.value = -24; // start compressing above this level
+      compressor.knee.value = 10;
+      compressor.ratio.value = 16;      // aggressive, limiter-like
+      compressor.attack.value = 0.003;  // catch peaks fast
+      compressor.release.value = 0.25;
+
+      source.connect(gainNode).connect(compressor).connect(ctx.destination);
       audio._audioCtx = ctx;
     } catch (e) {
       // If the browser can't do this for some reason, playback still
