@@ -165,6 +165,28 @@ function wireVideoPlayback(video) {
 
   var PLAY = '▶';   // ▶
   var PAUSE = '❚❚'; // ❚❚
+  var BOOST = 2.5; // amplify above the raw recording's own volume
+
+  // Web Audio API only lets us route an <audio> element through a gain
+  // boost once, and only after a real user gesture (the click) — so this
+  // is set up lazily, the first time each player is actually pressed.
+  var AudioContextClass = window.AudioContext || window.webkitAudioContext;
+
+  function wireVolumeBoost(audio) {
+    if (!AudioContextClass || audio._boosted) return;
+    audio._boosted = true;
+    try {
+      var ctx = new AudioContextClass();
+      var source = ctx.createMediaElementSource(audio);
+      var gainNode = ctx.createGain();
+      gainNode.gain.value = BOOST;
+      source.connect(gainNode).connect(ctx.destination);
+      audio._audioCtx = ctx;
+    } catch (e) {
+      // If the browser can't do this for some reason, playback still
+      // works fine at the recording's natural volume.
+    }
+  }
 
   players.forEach(function(player) {
     var audio = player.querySelector('audio');
@@ -180,6 +202,10 @@ function wireVideoPlayback(video) {
       });
 
       if (audio.paused) {
+        wireVolumeBoost(audio);
+        if (audio._audioCtx && audio._audioCtx.state === 'suspended') {
+          audio._audioCtx.resume();
+        }
         audio.play().catch(function() {});
       } else {
         audio.pause();
@@ -241,10 +267,10 @@ function initMemoryHoles() {
   // tiny or huge on extreme viewport sizes.
   function randomize(hole) {
     var vw = window.innerWidth;
-    var sizeMin = clamp(vw * 0.06, 40, 140);
-    var sizeRange = clamp(vw * 0.10, 40, 160);
-    var largeMin = clamp(vw * 0.16, 100, 320);
-    var largeRange = clamp(vw * 0.06, 40, 120);
+    var sizeMin = clamp(vw * 0.035, 28, 90);
+    var sizeRange = clamp(vw * 0.055, 28, 100);
+    var largeMin = clamp(vw * 0.09, 60, 160);
+    var largeRange = clamp(vw * 0.035, 25, 70);
 
     var size = Math.floor(Math.random() * sizeRange) + sizeMin;
     if (Math.random() < 0.2) size = Math.floor(Math.random() * largeRange) + largeMin;
@@ -265,6 +291,7 @@ function initMemoryHoles() {
   }
 
   var count = Math.floor(Math.random() * 4) + 5;
+  var holes = [];
 
   // Each hole runs its own independent cycle — fade out, reposition,
   // fade back in, wait a random stretch, repeat — rather than a single
@@ -303,6 +330,7 @@ function initMemoryHoles() {
       hole.className = 'memory-hole';
       randomize(hole);
       body.appendChild(hole);
+      holes.push(hole);
 
       // Small randomized offset so the initial batch doesn't fade in as
       // one perfectly synchronized wave, but still starts essentially
@@ -313,6 +341,20 @@ function initMemoryHoles() {
       }, Math.random() * 400);
     })();
   }
+
+  // Re-size (and reposition) every hole immediately when the window is
+  // resized, rather than waiting for its next scheduled cycle — otherwise
+  // sizes computed for the old viewport width would sit there unchanged
+  // until each hole happened to cycle on its own.
+  var resizeTimer;
+  window.addEventListener('resize', function() {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(function() {
+      holes.forEach(function(hole) {
+        randomize(hole);
+      });
+    }, 150);
+  });
 }
 
 // ── SHUFFLE — random post order on every page load (feed only) ──
